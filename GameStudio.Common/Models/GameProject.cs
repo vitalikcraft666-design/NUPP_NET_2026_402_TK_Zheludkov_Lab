@@ -88,6 +88,12 @@ public class GameProject : IEntity
             project.TeamMemberIds.Add(Guid.NewGuid());
         }
 
+        // ЛР3: сторінка в магазині з'являється на етапі виробництва
+        if (status is ProjectStatus.Production or ProjectStatus.Testing or ProjectStatus.Released)
+        {
+            project.StorePage = StorePage.CreateNew(project.Title, released: status == ProjectStatus.Released);
+        }
+
         return project;
     }
 
@@ -115,6 +121,9 @@ public class GameProject : IEntity
     public ProjectStatus Status { get; private set; }
 
     public List<Guid> TeamMemberIds { get; set; } = new();
+
+    // ЛР3: сторінка гри в магазині (зв'язок «один-до-одного»; null — сторінки ще немає)
+    public StorePage? StorePage { get; set; }
 
     // статичний метод — перевіряє, чи підтримується рушій
     public static bool IsEngineSupported(string engine) => SupportedEngines.Contains(engine);

@@ -1,10 +1,12 @@
 namespace GameStudio.Common.Interfaces;
 
 /// <summary>
-/// ЛР2: асинхронна версія узагальненого CRUD-сервісу.
-/// Наслідує IEnumerable&lt;T&gt;, тому сервіс можна перебирати через foreach і використовувати з LINQ.
+/// Асинхронна версія узагальненого CRUD-сервісу.
+/// ЛР2: реалізація зберігала дані в пам'яті та у файлі (CrudServiceAsync&lt;T&gt;).
+/// ЛР3: інтерфейс оновлено за завданням (без IEnumerable&lt;T&gt;); нова реалізація
+/// CrudServiceAsync&lt;TDomain, TModel&gt; працює з базою даних через репозиторій.
 /// </summary>
-public interface ICrudServiceAsync<T> : IEnumerable<T>
+public interface ICrudServiceAsync<T>
 {
     public Task<bool> CreateAsync(T element);
 
