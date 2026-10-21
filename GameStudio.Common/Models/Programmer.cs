@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GameStudio.Common.Generation;
 
 namespace GameStudio.Common.Models;
 
@@ -19,6 +20,20 @@ public class Programmer : Employee
     {
         PrimaryLanguage = primaryLanguage;
         Grade = grade;
+    }
+
+    // ЛР2: статичний фабричний метод — створює програміста з випадково згенерованими даними
+    public static Programmer CreateNew()
+    {
+        var programmer = new Programmer(
+            RandomData.FullName(),
+            RandomData.Money(20_000m, 60_000m, 500m),
+            RandomData.Pick(RandomData.ProgrammingLanguages),
+            RandomData.PickEnum<ProgrammerGrade>(),
+            RandomData.Date(new DateTime(2015, 1, 1), DateTime.Today));
+
+        programmer.CommitsCount = Random.Shared.Next(0, 5001);
+        return programmer;
     }
 
     public string PrimaryLanguage { get; set; }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GameStudio.Common.Generation;
 using GameStudio.Common.Interfaces;
 
 namespace GameStudio.Common.Models;
@@ -55,6 +56,39 @@ public class GameProject : IEntity
         Genre = genre;
         Engine = engine;
         Budget = budget;
+    }
+
+    // ЛР2: статичний фабричний метод — створює проєкт з випадково згенерованими даними
+    public static GameProject CreateNew()
+    {
+        var project = new GameProject(
+            RandomData.GameTitle(),
+            RandomData.Pick(RandomData.Genres),
+            RandomData.Pick(SupportedEngines.ToArray()),
+            RandomData.Money(50_000m, 2_000_000m, 1_000m));
+
+        // частина бюджету вже витрачена: від 0 до 120 %
+        decimal spent = Math.Round(project.Budget * (decimal)(Random.Shared.NextDouble() * 1.2), 2);
+        if (spent > 0)
+        {
+            project.Spend(spent);
+        }
+
+        // випадковий етап розробки
+        ProjectStatus status = RandomData.PickEnum<ProjectStatus>();
+        if (status != ProjectStatus.Concept)
+        {
+            project.ChangeStatus(status);
+        }
+
+        // команда з 2–15 учасників
+        int teamSize = Random.Shared.Next(2, 16);
+        for (int i = 0; i < teamSize; i++)
+        {
+            project.TeamMemberIds.Add(Guid.NewGuid());
+        }
+
+        return project;
     }
 
     // подія на основі власного делегата ProjectStatusChangedHandler
