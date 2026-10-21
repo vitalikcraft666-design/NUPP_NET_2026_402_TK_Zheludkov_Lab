@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.Common", "GameSt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.Console", "GameStudio.Console\GameStudio.Console.csproj", "{1DCAEBAF-9DA3-4563-9504-C1DDCE557982}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.Tests", "GameStudio.Tests\GameStudio.Tests.csproj", "{1DBC9452-4E08-448C-947F-DABF44A3E13A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{1DCAEBAF-9DA3-4563-9504-C1DDCE557982}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DCAEBAF-9DA3-4563-9504-C1DDCE557982}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DCAEBAF-9DA3-4563-9504-C1DDCE557982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DBC9452-4E08-448C-947F-DABF44A3E13A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DBC9452-4E08-448C-947F-DABF44A3E13A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DBC9452-4E08-448C-947F-DABF44A3E13A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DBC9452-4E08-448C-947F-DABF44A3E13A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

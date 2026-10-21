@@ -39,7 +39,10 @@ public abstract class Employee : IEntity
         FullName = fullName;
         BaseSalary = baseSalary;
         HireDate = hireDate ?? DateTime.Today;
-        _createdCount++;
+
+        // ЛР2: об'єкти можуть створюватися паралельно з кількох потоків,
+        // тому звичайний _createdCount++ дав би стан гонки. Interlocked.Increment — атомарна операція.
+        Interlocked.Increment(ref _createdCount);
     }
 
     public Guid Id { get; set; }
@@ -55,7 +58,7 @@ public abstract class Employee : IEntity
     public abstract string Position { get; }
 
     // статичний метод — повертає значення статичного поля, викликається через ім'я класу: Employee.GetCreatedCount()
-    public static int GetCreatedCount() => _createdCount;
+    public static int GetCreatedCount() => Volatile.Read(ref _createdCount);
 
     // метод — кількість повних років стажу на вказану дату (за замовчуванням — на сьогодні)
     public int GetYearsOfExperience(DateTime? onDate = null)

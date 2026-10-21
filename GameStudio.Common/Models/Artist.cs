@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GameStudio.Common.Generation;
 
 namespace GameStudio.Common.Models;
 
@@ -22,6 +23,20 @@ public class Artist : Employee
     {
         Specialization = specialization;
         MainTool = mainTool;
+    }
+
+    // ЛР2: статичний фабричний метод — створює художника з випадково згенерованими даними
+    public static Artist CreateNew()
+    {
+        var artist = new Artist(
+            RandomData.FullName(),
+            RandomData.Money(18_000m, 50_000m, 500m),
+            RandomData.PickEnum<ArtSpecialization>(),
+            RandomData.Pick(RandomData.ArtTools),
+            RandomData.Date(new DateTime(2015, 1, 1), DateTime.Today));
+
+        artist.ArtworksCompleted = Random.Shared.Next(0, 41);
+        return artist;
     }
 
     public ArtSpecialization Specialization { get; set; }
