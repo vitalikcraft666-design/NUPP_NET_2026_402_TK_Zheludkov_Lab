@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameStudio.Common\GameStudio.Common.csproj" />
+    <ProjectReference Include="..\GameStudio.Infrastructure\GameStudio.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

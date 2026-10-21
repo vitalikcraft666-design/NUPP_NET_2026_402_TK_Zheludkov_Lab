@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameStudio.Common\GameStudio.Common.csproj" />
+    <ProjectReference Include="..\GameStudio.Infrastructure\GameStudio.Infrastructure.csproj" />
+    <ProjectReference Include="..\GameStudio.Nosql\GameStudio.Nosql.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

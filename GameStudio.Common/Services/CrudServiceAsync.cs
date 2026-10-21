@@ -18,7 +18,7 @@ namespace GameStudio.Common.Services;
 /// тому одночасні виклики <see cref="SaveAsync"/> не зіпсують файл.</item>
 /// </list>
 /// </summary>
-public class CrudServiceAsync<T> : ICrudServiceAsync<T>
+public class CrudServiceAsync<T> : ICrudServiceAsync<T>, IEnumerable<T>
     where T : class, IEntity
 {
     // статичне поле — спільні налаштування серіалізації
