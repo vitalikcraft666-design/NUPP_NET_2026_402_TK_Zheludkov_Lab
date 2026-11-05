@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using GameStudio.Common.Interfaces;
 using GameStudio.Common.Models;
+using GameStudio.Common.Security;
 using GameStudio.REST.Mapping;
 using GameStudio.REST.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStudio.REST.Controllers;
@@ -12,6 +14,7 @@ namespace GameStudio.REST.Controllers;
 /// Вкладені ресурси: сторінка в магазині (1:1), баги проєкту (1:N) і команда (N:M).
 /// </summary>
 [Route("api/projects")]
+[Authorize]
 public class ProjectsController : ApiControllerBase
 {
     private const string ProjectName = "Проєкт";
@@ -34,6 +37,7 @@ public class ProjectsController : ApiControllerBase
     /// <param name="amount">Кількість проєктів на сторінці (1–100).</param>
     /// <response code="200">Сторінка списку (порожній масив, якщо сторінка за межами списку).</response>
     /// <response code="400">Некоректні параметри пагінації.</response>
+    [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -48,6 +52,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Один проєкт за ідентифікатором.</summary>
     /// <response code="200">Проєкт знайдено.</response>
     /// <response code="404">Проєкту з таким Id немає.</response>
+    [AllowAnonymous]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -60,6 +65,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Створює новий проєкт (статус Concept).</summary>
     /// <response code="201">Проєкт створено; заголовок Location містить його адресу.</response>
     /// <response code="400">Некоректні дані (наприклад, непідтримуваний рушій).</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -81,6 +87,7 @@ public class ProjectsController : ApiControllerBase
     /// <response code="400">Некоректні дані.</response>
     /// <response code="404">Проєкту з таким Id немає.</response>
     /// <response code="409">Статус завершеного (Released / Cancelled) проєкту змінити не можна.</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -118,6 +125,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Видаляє проєкт разом зі сторінкою в магазині, багами та записами про команду (каскадно).</summary>
     /// <response code="204">Проєкт видалено.</response>
     /// <response code="404">Проєкту з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -138,6 +146,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Сторінка проєкту в магазині.</summary>
     /// <response code="200">Сторінка є.</response>
     /// <response code="404">Немає проєкту або в нього ще немає сторінки.</response>
+    [AllowAnonymous]
     [HttpGet("{id:guid}/store-page")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -160,6 +169,7 @@ public class ProjectsController : ApiControllerBase
     /// <response code="200">Наявну сторінку замінено.</response>
     /// <response code="400">Некоректні дані.</response>
     /// <response code="404">Проєкту з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpPut("{id:guid}/store-page")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -189,6 +199,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Видаляє сторінку проєкту з магазину.</summary>
     /// <response code="204">Сторінку видалено.</response>
     /// <response code="404">Немає проєкту або сторінки.</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpDelete("{id:guid}/store-page")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -216,6 +227,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Усі баги проєкту.</summary>
     /// <response code="200">Список багів (може бути порожнім).</response>
     /// <response code="404">Проєкту з таким Id немає.</response>
+    [AllowAnonymous]
     [HttpGet("{id:guid}/bugs")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -238,6 +250,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Склад команди проєкту.</summary>
     /// <response code="200">Учасники команди.</response>
     /// <response code="404">Проєкту з таким Id немає.</response>
+    [AllowAnonymous]
     [HttpGet("{id:guid}/team")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -264,6 +277,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Додає працівника (програміста або художника) до команди проєкту. Повторний виклик нічого не змінює.</summary>
     /// <response code="204">Працівник у команді.</response>
     /// <response code="404">Немає проєкту або працівника.</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpPut("{id:guid}/team/{employeeId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -294,6 +308,7 @@ public class ProjectsController : ApiControllerBase
     /// <summary>Вилучає працівника з команди проєкту.</summary>
     /// <response code="204">Працівника вилучено.</response>
     /// <response code="404">Немає проєкту або працівник не входить до команди.</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpDelete("{id:guid}/team/{employeeId:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

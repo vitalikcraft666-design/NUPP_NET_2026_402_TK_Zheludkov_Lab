@@ -1,14 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using GameStudio.Common.Interfaces;
 using GameStudio.Common.Models;
+using GameStudio.Common.Security;
 using GameStudio.REST.Mapping;
 using GameStudio.REST.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStudio.REST.Controllers;
 
 /// <summary>Ресурс «художники»: /api/artists (таблиці Employees + Artists, TPT).</summary>
 [Route("api/artists")]
+[Authorize]
 public class ArtistsController : ApiControllerBase
 {
     private const string ArtistName = "Художника";
@@ -25,6 +28,7 @@ public class ArtistsController : ApiControllerBase
     /// <param name="amount">Кількість художників на сторінці (1–100).</param>
     /// <response code="200">Сторінка списку.</response>
     /// <response code="400">Некоректні параметри пагінації.</response>
+    [Authorize(Roles = StudioRoles.Staff)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -39,6 +43,7 @@ public class ArtistsController : ApiControllerBase
     /// <summary>Один художник за ідентифікатором.</summary>
     /// <response code="200">Художника знайдено.</response>
     /// <response code="404">Художника з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Staff)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,6 +56,7 @@ public class ArtistsController : ApiControllerBase
     /// <summary>Приймає на роботу нового художника.</summary>
     /// <response code="201">Художника створено.</response>
     /// <response code="400">Некоректні дані.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -71,6 +77,7 @@ public class ArtistsController : ApiControllerBase
     /// <response code="200">Дані оновлено.</response>
     /// <response code="400">Некоректні дані.</response>
     /// <response code="404">Художника з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -91,6 +98,7 @@ public class ArtistsController : ApiControllerBase
     /// <summary>Звільняє художника (його також вилучено з команд проєктів).</summary>
     /// <response code="204">Художника видалено.</response>
     /// <response code="404">Художника з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

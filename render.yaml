@@ -1,0 +1,21 @@
+# ЛР5, додаткове завдання: опис інфраструктури для Render (Blueprint). Веб-сервіс збирається з Dockerfile
+# у корені репозиторію. Секрет (пароль адміністратора) не зберігається в репозиторії: sync: false означає,
+# що значення вводиться в панелі Render і зберігається там як змінна середовища.
+services:
+  - type: web
+    name: gamestudio-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: lab5
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    buildFilter:
+      ignoredPaths:
+        - Reports/**
+    envVars:
+      - key: Seed__AdminEmail
+        value: admin@gamestudio.ua
+      - key: Seed__AdminPassword
+        sync: false

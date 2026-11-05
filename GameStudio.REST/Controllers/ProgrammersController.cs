@@ -1,14 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using GameStudio.Common.Interfaces;
 using GameStudio.Common.Models;
+using GameStudio.Common.Security;
 using GameStudio.REST.Mapping;
 using GameStudio.REST.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStudio.REST.Controllers;
 
 /// <summary>Ресурс «програмісти»: /api/programmers (таблиці Employees + Programmers, TPT).</summary>
 [Route("api/programmers")]
+[Authorize]
 public class ProgrammersController : ApiControllerBase
 {
     private const string ProgrammerName = "Програміста";
@@ -25,6 +28,7 @@ public class ProgrammersController : ApiControllerBase
     /// <param name="amount">Кількість програмістів на сторінці (1–100).</param>
     /// <response code="200">Сторінка списку.</response>
     /// <response code="400">Некоректні параметри пагінації.</response>
+    [Authorize(Roles = StudioRoles.Staff)]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -39,6 +43,7 @@ public class ProgrammersController : ApiControllerBase
     /// <summary>Один програміст за ідентифікатором.</summary>
     /// <response code="200">Програміста знайдено.</response>
     /// <response code="404">Програміста з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Staff)]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,6 +56,7 @@ public class ProgrammersController : ApiControllerBase
     /// <summary>Приймає на роботу нового програміста.</summary>
     /// <response code="201">Програміста створено.</response>
     /// <response code="400">Некоректні дані.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -71,6 +77,7 @@ public class ProgrammersController : ApiControllerBase
     /// <response code="200">Дані оновлено.</response>
     /// <response code="400">Некоректні дані.</response>
     /// <response code="404">Програміста з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -91,6 +98,7 @@ public class ProgrammersController : ApiControllerBase
     /// <summary>Звільняє програміста: його баги залишаються без виконавця, а з команд проєктів його вилучено.</summary>
     /// <response code="204">Програміста видалено.</response>
     /// <response code="404">Програміста з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Admin)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
