@@ -1,11 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using GameStudio.Common.Models;
 using GameStudio.REST.Models;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Data.Sqlite;
 
 namespace GameStudio.Tests;
 
@@ -13,35 +10,19 @@ namespace GameStudio.Tests;
 /// ЛР4: інтеграційні тести REST API. WebApplicationFactory запускає застосунок GameStudio.REST у пам'яті
 /// (без мережі) з окремим тимчасовим файлом SQLite, тож тести не змінюють Database/gamestudio.db.
 /// Перевіряються коди відповідей HTTP і вміст JSON для всіх контролерів.
+/// ЛР5: запити на зміну даних виконуються з токеном адміністратора (клієнт _client), права ролей перевіряє AuthTests.
 /// </summary>
 [TestFixture]
-public class RestApiTests
+public class RestApiTests : ApiTestBase
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web)
-    {
-        Converters = { new JsonStringEnumConverter() }
-    };
-
-    private string _databasePath = null!;
-    private WebApplicationFactory<Program> _factory = null!;
     private HttpClient _client = null!;
+    private string _databasePath = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _databasePath = Path.Combine(Path.GetTempPath(), $"gamestudio-api-{Guid.NewGuid():N}.db");
-        _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-            builder.UseSetting("ConnectionStrings:GameStudio", $"Data Source={_databasePath}"));
-        _client = _factory.CreateClient();
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        _client.Dispose();
-        _factory.Dispose();
-        SqliteConnection.ClearAllPools();
-        File.Delete(_databasePath);
+        _client = Admin;
+        _databasePath = DatabasePath;
     }
 
     [Test]
@@ -296,7 +277,4 @@ public class RestApiTests
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Created));
         return await Read<BugModel>(response);
     }
-
-    private static async Task<T> Read<T>(HttpResponseMessage response) =>
-        (await response.Content.ReadFromJsonAsync<T>(Json))!;
 }

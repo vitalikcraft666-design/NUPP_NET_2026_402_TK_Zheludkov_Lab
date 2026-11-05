@@ -4,8 +4,14 @@ using GameStudio.Common.Interfaces;
 using GameStudio.Common.Models;
 using GameStudio.Common.Services;
 using GameStudio.Infrastructure;
+using GameStudio.Infrastructure.Identity;
 using GameStudio.Infrastructure.Mapping;
 using GameStudio.Infrastructure.Repositories;
+using GameStudio.REST.Swagger;
+using Microsoft.AspNetCore.Authentication.BearerToken;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +50,36 @@ builder.Services.AddScoped<ICrudServiceAsync<Employee>, CrudServiceAsync<Employe
 builder.Services.AddScoped<ICrudServiceAsync<Programmer>, CrudServiceAsync<Programmer, Db.ProgrammerModel>>();
 builder.Services.AddScoped<ICrudServiceAsync<Artist>, CrudServiceAsync<Artist, Db.ArtistModel>>();
 
+// ---------- ЛР5: ASP.NET Core Identity — користувачі, ролі, токени ----------
+// AddIdentityApiEndpoints реєструє UserManager, SignInManager, схему автентифікації Bearer (токени доступу
+// та оновлення) і сервіси для вбудованих кінцевих точок /register, /login, /refresh тощо.
+builder.Services
+    .AddIdentityApiEndpoints<StudioUser>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequiredLength = 8;
+        options.Lockout.MaxFailedAccessAttempts = 5;
+    })
+    .AddRoles<IdentityRole>()                          // RoleManager<IdentityRole> і ролі в токені
+    .AddUserManager<StudioUserManager>()               // роль Tester для кожного нового користувача
+    .AddEntityFrameworkStores<GameStudioContext>();    // користувачі та ролі зберігаються в БД з ЛР3
+
+// час життя токена доступу; токен оновлення (refreshToken) дійсний 14 днів
+builder.Services.Configure<BearerTokenOptions>(IdentityConstants.BearerScheme,
+    options => options.BearerTokenExpiration = TimeSpan.FromHours(1));
+
+builder.Services.AddAuthorization();
+
+// на хостингу (Render) HTTPS завершується на проксі-сервері: беремо схему й IP клієнта із заголовків X-Forwarded-*
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+builder.Services.AddHealthChecks();
+
 // ---------- Рівень представлення: контролери Web API + Swagger ----------
 builder.Services.AddControllers(options =>
     {
@@ -64,9 +100,20 @@ builder.Services.AddProblemDetails(options =>
 {
     options.CustomizeProblemDetails = context =>
     {
-        if (context.ProblemDetails is HttpValidationProblemDetails)
+        ProblemDetails problem = context.ProblemDetails;
+        if (problem is HttpValidationProblemDetails)
         {
-            context.ProblemDetails.Title = "Помилка перевірки даних";
+            problem.Title = "Помилка перевірки даних";
+        }
+        else if (problem.Status == StatusCodes.Status401Unauthorized && problem.Detail is null)
+        {
+            problem.Title = "Потрібна автентифікація";
+            problem.Detail = "Додайте заголовок Authorization: Bearer <accessToken> з відповіді POST /api/auth/login.";
+        }
+        else if (problem.Status == StatusCodes.Status403Forbidden)
+        {
+            problem.Title = "Доступ заборонено";
+            problem.Detail = "Роль користувача не дозволяє виконати цю дію.";
         }
     };
 });
@@ -78,8 +125,22 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "GameStudio REST API",
         Version = "v1",
-        Description = "ЛР4: REST API ігрової студії — проєкти, баги, програмісти та художники (CRUD над БД з ЛР3)."
+        Description = "REST API ігрової студії — проєкти, баги, програмісти та художники (CRUD над БД з ЛР3). " +
+                      "ЛР5: реєстрація й вхід (/api/auth), доступ за токеном Bearer і ролями Admin, Manager, Developer, Tester."
     });
+
+    // кнопка «Authorize»: токен з відповіді /api/auth/login додається до запитів у заголовку Authorization: Bearer <токен>
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Токен доступу (accessToken) з відповіді POST /api/auth/login."
+    });
+
+    // замок і відповіді 401/403 лише для захищених кінцевих точок; у описі — ролі, яким дозволено доступ
+    options.OperationFilter<AuthorizationOperationFilter>();
 
     // XML-коментарі контролерів (/// <summary>) показуються на сторінці Swagger
     string xmlFile = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
@@ -88,27 +149,46 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// застосовуємо міграції ЛР3 (якщо файл БД новий або застарів)
+// застосовуємо міграції (ЛР3 + таблиці Identity з ЛР5) і створюємо ролі та адміністратора
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    GameStudioContext context = scope.ServiceProvider.GetRequiredService<GameStudioContext>();
-    await context.Database.MigrateAsync();
+    IServiceProvider services = scope.ServiceProvider;
+    await services.GetRequiredService<GameStudioContext>().Database.MigrateAsync();
+    await IdentitySeeder.SeedAsync(
+        services.GetRequiredService<RoleManager<IdentityRole>>(),
+        services.GetRequiredService<UserManager<StudioUser>>(),
+        app.Configuration["Seed:AdminEmail"],
+        app.Configuration["Seed:AdminPassword"],
+        services.GetRequiredService<ILoggerFactory>().CreateLogger("IdentitySeeder"));
 }
+
+app.UseForwardedHeaders();
 
 // необроблені винятки → 500 у форматі ProblemDetails (у режимі Development — сторінка з деталями помилки)
 app.UseExceptionHandler();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options => options.DocumentTitle = "GameStudio REST API");
-}
+// відповіді без тіла (401 Unauthorized, 403 Forbidden, 404 для невідомої адреси) теж отримують тіло ProblemDetails
+app.UseStatusCodePages();
+
+// Swagger доступний і на сервері: через нього виконуються запити до розгорнутого застосунку
+app.UseSwagger();
+app.UseSwaggerUI(options => options.DocumentTitle = "GameStudio REST API");
 
 app.UseHttpsRedirection();
 
+// автентифікація (хто робить запит — за токеном із заголовка Authorization), потім авторизація (чи дозволено)
+app.UseAuthentication();
 app.UseAuthorization();
 
+// вбудовані кінцеві точки ASP.NET Core Identity: /api/auth/register, /api/auth/login, /api/auth/refresh, /api/auth/manage/info …
+app.MapGroup("/api/auth")
+    .WithTags("Auth")
+    .MapIdentityApi<StudioUser>();
+
 app.MapControllers();
+
+app.MapHealthChecks("/health");
+app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 
 app.Run();
 

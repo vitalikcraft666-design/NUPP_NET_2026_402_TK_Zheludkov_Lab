@@ -1,14 +1,17 @@
 using System.ComponentModel.DataAnnotations;
 using GameStudio.Common.Interfaces;
 using GameStudio.Common.Models;
+using GameStudio.Common.Security;
 using GameStudio.REST.Mapping;
 using GameStudio.REST.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStudio.REST.Controllers;
 
 /// <summary>Ресурс «баги»: /api/bugs. Кожен баг належить проєкту і може бути призначений програмісту.</summary>
 [Route("api/bugs")]
+[Authorize]
 public class BugsController : ApiControllerBase
 {
     private const string BugName = "Баг";
@@ -30,6 +33,7 @@ public class BugsController : ApiControllerBase
     /// <param name="amount">Кількість багів на сторінці (1–100).</param>
     /// <response code="200">Сторінка списку.</response>
     /// <response code="400">Некоректні параметри пагінації.</response>
+    [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -44,6 +48,7 @@ public class BugsController : ApiControllerBase
     /// <summary>Один баг за ідентифікатором.</summary>
     /// <response code="200">Баг знайдено.</response>
     /// <response code="404">Бага з таким Id немає.</response>
+    [AllowAnonymous]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -87,6 +92,7 @@ public class BugsController : ApiControllerBase
     /// <response code="200">Баг оновлено.</response>
     /// <response code="400">Некоректні дані (наприклад, виправлений баг без виконавця).</response>
     /// <response code="404">Бага з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.Staff)]
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -128,6 +134,7 @@ public class BugsController : ApiControllerBase
     /// <summary>Видаляє баг.</summary>
     /// <response code="204">Баг видалено.</response>
     /// <response code="404">Бага з таким Id немає.</response>
+    [Authorize(Roles = StudioRoles.AdminOrManager)]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
