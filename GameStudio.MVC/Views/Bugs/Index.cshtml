@@ -1,0 +1,67 @@
+@model IEnumerable<GameStudio.Infrastructure.Models.BugReportModel>
+
+@{
+    ViewData["Title"] = "Баги";
+}
+
+<h1>Баги</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Додати баг</a>
+</p>
+<table class="table table-sm table-striped align-middle">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Severity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsFixed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GameProject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Assignee)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Severity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsFixed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameProject.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assignee!.FullName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Змінити</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<partial name="_Pager" />

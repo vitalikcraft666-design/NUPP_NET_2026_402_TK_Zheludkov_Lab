@@ -1,0 +1,50 @@
+@model GameStudio.Infrastructure.Models.BugReportModel
+
+@{
+    ViewData["Title"] = "Новий баг";
+}
+
+<h1>Новий баг</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Severity" class="control-label"></label>
+                <select asp-for="Severity" class="form-control" asp-items="Html.GetEnumSelectList<GameStudio.Common.Models.BugSeverity>()"></select>
+                <span asp-validation-for="Severity" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsFixed" /> @Html.DisplayNameFor(model => model.IsFixed)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="GameProjectId" class="control-label"></label>
+                <select asp-for="GameProjectId" class="form-control" asp-items="ViewBag.GameProjectId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="AssigneeId" class="control-label"></label>
+                <select asp-for="AssigneeId" class="form-control" asp-items="ViewBag.AssigneeId"></select>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Створити" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">До списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

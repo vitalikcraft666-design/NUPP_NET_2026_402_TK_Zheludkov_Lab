@@ -1,0 +1,113 @@
+@model GameStudio.Infrastructure.Models.GameProjectModel
+
+@{
+    ViewData["Title"] = "Проєкт";
+}
+
+<h1>Проєкт</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.PublicId)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.PublicId)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Engine)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Engine)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Budget)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Budget)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Spent)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Spent)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+    </dl>
+</div>
+
+@if (Model != null)
+{
+    <h4 class="mt-4">Сторінка в магазині <small class="text-muted">(один-до-одного)</small></h4>
+    @if (Model.StorePage is { } storePage)
+    {
+        <dl class="row">
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StorePage!.Url)</dt>
+            <dd class="col-sm-9"><a href="@storePage.Url">@storePage.Url</a></dd>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StorePage!.Price)</dt>
+            <dd class="col-sm-9">@storePage.Price.ToString("N0")</dd>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StorePage!.WishlistCount)</dt>
+            <dd class="col-sm-9">@storePage.WishlistCount.ToString("N0")</dd>
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StorePage!.ReleaseDate)</dt>
+            <dd class="col-sm-9">@(storePage.ReleaseDate?.ToString("dd.MM.yyyy") ?? "—")</dd>
+        </dl>
+    }
+    else
+    {
+        <p class="text-muted">Сторінки в магазині ще немає.</p>
+    }
+
+    <h4 class="mt-4">Команда <small class="text-muted">(багато-до-багатьох, @Model.Assignments.Count осіб)</small></h4>
+    <table class="table table-sm table-striped">
+        <thead><tr><th>ПІБ</th><th>Роль</th><th>Дата призначення</th></tr></thead>
+        <tbody>
+        @foreach (var assignment in Model.Assignments.OrderBy(a => a.Role).ThenBy(a => a.Employee.FullName))
+        {
+            <tr>
+                <td>@assignment.Employee.FullName</td>
+                <td>@assignment.Role</td>
+                <td>@assignment.AssignedAt.ToString("dd.MM.yyyy")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <h4 class="mt-4">Баги <small class="text-muted">(один-до-багатьох, @Model.Bugs.Count шт.)</small></h4>
+    <table class="table table-sm table-striped">
+        <thead><tr><th>Опис</th><th>Критичність</th><th>Виконавець</th><th>Стан</th></tr></thead>
+        <tbody>
+        @foreach (var bug in Model.Bugs.OrderByDescending(b => b.Severity))
+        {
+            <tr>
+                <td><a asp-controller="Bugs" asp-action="Details" asp-route-id="@bug.Id">@bug.Title</a></td>
+                <td>@bug.Severity</td>
+                <td>@(bug.Assignee?.FullName ?? "—")</td>
+                <td>@(bug.IsFixed ? "виправлено" : "відкрито")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Змінити</a> |
+    <a asp-action="Index">До списку</a>
+</div>

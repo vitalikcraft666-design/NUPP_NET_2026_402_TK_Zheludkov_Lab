@@ -1,0 +1,67 @@
+@model IEnumerable<GameStudio.Infrastructure.Models.ArtistModel>
+
+@{
+    ViewData["Title"] = "Художники";
+}
+
+<h1>Художники</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Додати художника</a>
+</p>
+<table class="table table-sm table-striped align-middle">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Specialization)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MainTool)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ArtworksCompleted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HireDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BaseSalary)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Specialization)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MainTool)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ArtworksCompleted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HireDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BaseSalary)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Змінити</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Деталі</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<partial name="_Pager" />

@@ -1,0 +1,57 @@
+@model GameStudio.Infrastructure.Models.ArtistModel
+
+@{
+    ViewData["Title"] = "Новий художник";
+}
+
+<h1>Новий художник</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Specialization" class="control-label"></label>
+                <select asp-for="Specialization" class="form-control" asp-items="Html.GetEnumSelectList<GameStudio.Common.Models.ArtSpecialization>()"></select>
+                <span asp-validation-for="Specialization" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MainTool" class="control-label"></label>
+                <input asp-for="MainTool" class="form-control" />
+                <span asp-validation-for="MainTool" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ArtworksCompleted" class="control-label"></label>
+                <input asp-for="ArtworksCompleted" class="form-control" />
+                <span asp-validation-for="ArtworksCompleted" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FullName" class="control-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HireDate" class="control-label"></label>
+                <input asp-for="HireDate" class="form-control" />
+                <span asp-validation-for="HireDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BaseSalary" class="control-label"></label>
+                <input asp-for="BaseSalary" class="form-control" />
+                <span asp-validation-for="BaseSalary" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Створити" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">До списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
