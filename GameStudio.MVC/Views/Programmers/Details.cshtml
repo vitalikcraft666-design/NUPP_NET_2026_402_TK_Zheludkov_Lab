@@ -1,0 +1,59 @@
+@model GameStudio.Infrastructure.Models.ProgrammerModel
+
+@{
+    ViewData["Title"] = "Програміст";
+}
+
+<h1>Програміст</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.PrimaryLanguage)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.PrimaryLanguage)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Grade)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Grade)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.CommitsCount)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CommitsCount)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.PublicId)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.PublicId)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.FullName)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.FullName)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.HireDate)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.HireDate)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.BaseSalary)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.BaseSalary)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Змінити</a> |
+    <a asp-action="Index">До списку</a>
+</div>

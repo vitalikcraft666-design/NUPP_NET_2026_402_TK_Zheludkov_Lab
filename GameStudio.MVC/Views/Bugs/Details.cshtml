@@ -1,0 +1,59 @@
+@model GameStudio.Infrastructure.Models.BugReportModel
+
+@{
+    ViewData["Title"] = "Баг";
+}
+
+<h1>Баг</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.PublicId)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.PublicId)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Severity)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Severity)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.IsFixed)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.IsFixed)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.CreatedAt)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CreatedAt)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.GameProject)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.GameProject.Engine)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Assignee)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Assignee!.FullName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Змінити</a> |
+    <a asp-action="Index">До списку</a>
+</div>

@@ -1,0 +1,25 @@
+@{
+    int currentPage = (int)(ViewData["Page"] ?? 1);
+    int totalPages = (int)(ViewData["TotalPages"] ?? 1);
+    int totalCount = (int)(ViewData["TotalCount"] ?? 0);
+    int first = Math.Max(1, currentPage - 3);
+    int last = Math.Min(totalPages, currentPage + 3);
+}
+
+<nav class="d-flex justify-content-between align-items-center" aria-label="Сторінки">
+    <span class="text-muted">Усього записів: @totalCount · сторінка @currentPage з @totalPages</span>
+    <ul class="pagination mb-0">
+        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="page-link" asp-route-page="@(currentPage - 1)">&laquo;</a>
+        </li>
+        @for (int i = first; i <= last; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link" asp-route-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+            <a class="page-link" asp-route-page="@(currentPage + 1)">&raquo;</a>
+        </li>
+    </ul>
+</nav>

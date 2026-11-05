@@ -1,0 +1,39 @@
+# Приклади запитів до GameStudio REST API (Visual Studio / Rider / VS Code REST Client).
+# Порожній рядок підключення в appsettings.json означає файл Database/gamestudio.db з ЛР3.
+
+@host = http://localhost:5160
+
+### Список проєктів (сторінка 1, по 5)
+GET {{host}}/api/projects?page=1&amount=5
+Accept: application/json
+
+### Створення проєкту → 201 Created + заголовок Location
+POST {{host}}/api/projects
+Content-Type: application/json
+
+{
+  "title": "Кобзар-квест",
+  "genre": "Adventure",
+  "engine": "Godot",
+  "budget": 420000
+}
+
+### Непідтримуваний рушій → 400 Bad Request
+POST {{host}}/api/projects
+Content-Type: application/json
+
+{
+  "title": "Тест",
+  "genre": "Puzzle",
+  "engine": "CryEngine",
+  "budget": 1000
+}
+
+### Неіснуючий проєкт → 404 Not Found
+GET {{host}}/api/projects/00000000-0000-0000-0000-000000000001
+
+### Список програмістів
+GET {{host}}/api/programmers?page=1&amount=3
+
+### Список багів
+GET {{host}}/api/bugs?page=1&amount=3

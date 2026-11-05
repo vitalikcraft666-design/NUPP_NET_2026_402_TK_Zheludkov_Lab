@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.Nosql", "GameStudio.Nosql\GameStudio.Nosql.csproj", "{25C42D88-0C5A-499A-9DF7-279D9EF3CB56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.REST", "GameStudio.REST\GameStudio.REST.csproj", "{3BC9EE74-6993-457A-84A4-87F6D56EE223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStudio.MVC", "GameStudio.MVC\GameStudio.MVC.csproj", "{3815231A-CD4D-439C-9B77-2395AD5DF098}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,13 @@ Global
 		{25C42D88-0C5A-499A-9DF7-279D9EF3CB56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25C42D88-0C5A-499A-9DF7-279D9EF3CB56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25C42D88-0C5A-499A-9DF7-279D9EF3CB56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BC9EE74-6993-457A-84A4-87F6D56EE223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BC9EE74-6993-457A-84A4-87F6D56EE223}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BC9EE74-6993-457A-84A4-87F6D56EE223}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BC9EE74-6993-457A-84A4-87F6D56EE223}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3815231A-CD4D-439C-9B77-2395AD5DF098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3815231A-CD4D-439C-9B77-2395AD5DF098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3815231A-CD4D-439C-9B77-2395AD5DF098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3815231A-CD4D-439C-9B77-2395AD5DF098}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

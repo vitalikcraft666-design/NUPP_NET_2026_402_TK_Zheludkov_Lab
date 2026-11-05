@@ -1,0 +1,53 @@
+﻿@model GameStudio.MVC.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Головна";
+}
+
+<h1 class="mb-1">Ігрова студія</h1>
+<p class="text-muted mb-4">
+    Вебзастосунок ASP.NET Core MVC над базою даних SQLite з ЛР3. Сторінки створення, перегляду, редагування
+    та видалення згенеровано вбудованим генератором ASP.NET (MVC Controller with views, using Entity Framework).
+</p>
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Проєкти</h5>
+                <p class="display-6 mb-1">@Model.Projects</p>
+                <p class="text-muted mb-2">випущено: @Model.ReleasedProjects, сторінок у магазині: @Model.StorePages</p>
+                <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-primary btn-sm">Відкрити</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Програмісти</h5>
+                <p class="display-6 mb-1">@Model.Programmers</p>
+                <p class="text-muted mb-2">таблиці Employees + Programmers</p>
+                <a asp-controller="Programmers" asp-action="Index" class="btn btn-outline-primary btn-sm">Відкрити</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Художники</h5>
+                <p class="display-6 mb-1">@Model.Artists</p>
+                <p class="text-muted mb-2">таблиці Employees + Artists</p>
+                <a asp-controller="Artists" asp-action="Index" class="btn btn-outline-primary btn-sm">Відкрити</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Баги</h5>
+                <p class="display-6 mb-1">@Model.Bugs</p>
+                <p class="text-muted mb-2">відкритих: @Model.OpenBugs</p>
+                <a asp-controller="Bugs" asp-action="Index" class="btn btn-outline-primary btn-sm">Відкрити</a>
+            </div>
+        </div>
+    </div>
+</div>
